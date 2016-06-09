@@ -1,0 +1,65 @@
+<!doctype html>
+<html onselectstart='return false'>
+<head>
+<meta charset="utf-8">
+<title>3D动画</title>
+<style>
+*{ margin:0;padding:0;}
+body{background:#000;}
+#box{width:120px; height:180px; margin:150px auto 0; position:relative;transform-style:preserve-3d;transform:perspective(800px) rotateX(-10deg) rotateY(0deg); /*border:#FF0 solid 2px;*/}
+
+#box img{width:120px; height:180px;position:absolute;top:0;left:0;border-radius:5px;
+box-shadow:0 0 10px #FFF;-webkit-box-reflect:below 10px -webkit-linear-gradient(top,rgba(0,0,0,0.2) 40%,rgba(0,0,0,0.7)) ;}
+</style>
+</head>
+
+<body>
+<div id="box">
+	<img src="images/1.jpg">
+    <img src="images/2.jpg">
+    <img src="images/3.jpg">
+    <img src="images/4.jpg">
+    <img src="images/5.jpg">
+    <img src="images/6.jpg">
+    <img src="images/7.jpg">
+    <img src="images/8.jpg">
+    <img src="images/9.jpg">
+</div>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script>
+	//定义每张图的旋转角度
+	var Deg = 360/$('#box img').length; 
+	var x,y, dx=0,dy=0, timer=null;
+	$('#box img').each(function(i){ //each是循环函数，意思是每一张图片都加css3的样式
+        $(this).css({'transform':'rotateY('+i*Deg+'deg ) translatez(350px)'})//y轴的旋转角度  //延z轴弹出350像素
+    }).attr('ondragstart','return false')//定义鼠标不能拖拉图片
+	$(document).mousedown(function(e){
+		clearInterval(timer);
+		e = e||window.event;//兼容 IE浏览器
+		x = e.clientX;  //获取鼠标点击的x轴于窗口左边的距离
+		y = e.clientY;	//获取鼠标点击的y轴于窗口顶部的距离
+		$(document).on('mousemove',function(e){    //on，绑定函数
+			xN=e.clientX-x;	//获取鼠标按下X轴的坐标于移动是鼠标的坐标
+			yN=e.clientY-y; //获取鼠标点击的y轴于窗口顶部的距离
+			dx-=-xN*0.1; //只是起减速效果
+			dy+=-yN*0.1;
+			$('#box').css({'transform':'perspective(800px) rotateX('+dy+'deg) rotateY('+dx+'deg)'})
+			x = e.clientX;   //重定义坐标为鼠标抬起后当前的坐标，保证下一次可以重新开始滑动
+			y = e.clientY;
+		}).mouseup(function(){
+			$(this).off('mousemove');//off，解除函数
+			    clearInterval(timer);
+				autoplay();
+		})
+	})
+	function autoplay(){
+		timer = setInterval(function(){
+			dx+=0.3; //只横向移动
+			$('#box').css({'transform':'perspective(800px) rotateX('+dy+'deg) rotateY('+dx+'deg)'})
+		},50)
+	}
+	autoplay();
+</script>
+ 
+</body>
+</html>
